@@ -28,7 +28,9 @@ public class DBMeter extends CordovaPlugin {
     private static final int REQ_CODE = 0;
     private AudioRecord audioRecord;
     private short[] buffer;
-    private Timer timer;
+    private Timer timer1;
+    private Timer timer2;
+    
     private boolean isListening = false;
 
 
@@ -65,10 +67,16 @@ public class DBMeter extends CordovaPlugin {
             this.isListening = false;
             this.audioRecord.stop();
             this.audioRecord = null;
-            if (this.timer != null) {
-                this.timer.cancel();
-                this.timer = null;
+            if (this.timer1 != null) {
+                this.timer1.cancel();
+                this.timer1 = null;
             }
+
+            if (this.timer2 != null) {
+                this.timer2.cancel();
+                this.timer2 = null;
+            }
+            
             callbackContext.success();
         } else {
             sendPluginError(callbackContext, PluginError.DBMETER_NOT_INITIALIZED, "DBMeter is not initialized");
@@ -104,7 +112,8 @@ public class DBMeter extends CordovaPlugin {
                     that.isListening = true;
                     that.audioRecord.startRecording();
 
-                    that.timer = new Timer(LOG_TAG, true);
+                    that.timer1 = new Timer(LOG_TAG, true);
+                    that.timer2 = new Timer(LOG_TAG, true);
 
                     //start calling run in a timertask
                     TimerTask timerTask = new TimerTask() {
@@ -129,8 +138,8 @@ public class DBMeter extends CordovaPlugin {
                             callbackContext.sendPluginResult(result);
                         }
                     };
-                    that.timer.scheduleAtFixedRate(timerTask, 0, 100);
-                 	that.timer.scheduleAtFixedRate(timerTask, 50, 100);
+                    that.timer1.scheduleAtFixedRate(timerTask, 0, 100);
+                 	that.timer2.scheduleAtFixedRate(timerTask, 50, 100);
                 }
             }
         });
@@ -151,9 +160,13 @@ public class DBMeter extends CordovaPlugin {
                     that.isListening = false;
 
 
-                    if (that.timer != null) {
-                        that.timer.cancel();
+                    if (that.timer1 != null) {
+                        that.timer1.cancel();
                     }
+                    if (that.timer2 != null) {
+                        that.timer2.cancel();
+                    }
+                    
                     if (that.audioRecord != null) {
                         that.audioRecord.stop();
                     }
