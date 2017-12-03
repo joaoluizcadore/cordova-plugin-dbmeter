@@ -130,8 +130,7 @@ public class DBMeter extends CordovaPlugin {
                         }
                     };
                     that.timer.scheduleAtFixedRate(timerTask, 0, 100);
-                 	that.timer.scheduleAtFixedRate(timerTask, 33, 100);
-                 	that.timer.scheduleAtFixedRate(timerTask, 66, 100);	   
+                 	that.timer.scheduleAtFixedRate(timerTask, 50, 100);
                 }
             }
         });
