@@ -88,7 +88,7 @@ public class DBMeter extends CordovaPlugin {
             public void run() {
                 if (that.audioRecord == null) {
                     that.isListening = false;
-                    int rate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM);
+                    int rate = 33000; //AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM);
                     int bufferSize = AudioRecord.getMinBufferSize(rate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
 
                     that.audioRecord = new AudioRecord(
@@ -129,7 +129,7 @@ public class DBMeter extends CordovaPlugin {
                             callbackContext.sendPluginResult(result);
                         }
                     };
-                    that.timer.scheduleAtFixedRate(timerTask, 0, 50);
+                    that.timer.scheduleAtFixedRate(timerTask, 0, 33);
                 }
             }
         });
