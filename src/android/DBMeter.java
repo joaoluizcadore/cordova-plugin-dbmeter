@@ -90,6 +90,7 @@ public class DBMeter extends CordovaPlugin {
                     that.isListening = false;
                     int rate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM);
                     int bufferSize = AudioRecord.getMinBufferSize(rate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
+                    
 
                     that.audioRecord = new AudioRecord(
                             MediaRecorder.AudioSource.MIC,
@@ -109,12 +110,15 @@ public class DBMeter extends CordovaPlugin {
                     //start calling run in a timertask
                     TimerTask timerTask = new TimerTask() {
                         public void run() {
-                            int readSize = that.audioRecord.read(that.buffer, 0, that.buffer.length);
+                            int bufferSizeInBytes = 1024; 
+                            short[] buffer2 = new short[bufferSizeInBytes];
+
+                            int readSize = that.audioRecord.read(buffer2, 0, buffer2.length);
                             double db = 0;
                             double maxAmplitude = 0;
                             for (int i = 0; i < readSize; i++) {
-                                if (Math.abs(that.buffer[i]) > maxAmplitude) {
-                                    maxAmplitude = Math.abs(that.buffer[i]);
+                                if (Math.abs(buffer2[i]) > maxAmplitude) {
+                                    maxAmplitude = Math.abs(buffer2[i]);
                                 }
                             }
 
@@ -123,13 +127,13 @@ public class DBMeter extends CordovaPlugin {
                             }
 
                             LOG.d(LOG_TAG, Double.toString(db));
-
+                            
                             PluginResult result = new PluginResult(PluginResult.Status.OK, (float) db);
                             result.setKeepCallback(true);
                             callbackContext.sendPluginResult(result);
                         }
                     };
-                    that.timer.scheduleAtFixedRate(timerTask, 0, 33);
+                    that.timer.scheduleAtFixedRate(timerTask, 0, 50);
                 }
             }
         });
